@@ -48,3 +48,23 @@ export const getOtherUsers = async (req,res) => {
         return res.status(400).json({message : `get other users error ${error}`})
     }
 }
+
+// Creating the search
+
+export const search = async (req,res) => {
+    try {
+        let {query} = req.query; //  sending query parameter so by using this we can search user by name or username.
+        if(!query){
+            return res.status(400).json({message : "query is required for search"})
+        }
+        let users = await User.find({
+            $or :[ // using or so we can serch the user by 
+                {name : {$regex : query , $options:"i"}}, // i means insensitive means for both uppercase and lowercase.
+                {userName : {$regex : query , $options:"i"}}
+            ]
+        })
+        return res.status(200).json(users)
+    } catch (error) {
+        return res.status(400).json({message : `search users error ${error}`})
+    }
+}

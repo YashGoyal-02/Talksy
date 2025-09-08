@@ -7,7 +7,8 @@ const userSlice = createSlice({
         otherUsers : null,// for users except us
         selectedUser : null,
         socket : null,
-        onlineUsers : [],
+        onlineUsers : null,
+        searchData : null,
     },
     reducers:{
         setUserData : (state,action) => { // state defines the initialstate and action define the change in initialstate
@@ -25,10 +26,13 @@ const userSlice = createSlice({
         setOnlineUsers : (state,action) => {
             state.onlineUsers = action.payload // change the selecteduser state
         },
+        setSearchData : (state,action) => {
+            state.searchData = action.payload // change the searchdata state
+        },
     }
 });
 
-export const {setUserData , setOtherUsers , setSelectedUser , setSocket , setOnlineUsers} = userSlice.actions // exporting reducers
+export const {setUserData , setOtherUsers , setSelectedUser , setSocket , setOnlineUsers , setSearchData} = userSlice.actions // exporting reducers
 
 export default userSlice.reducer // exporting the slide
 

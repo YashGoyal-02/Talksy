@@ -21,8 +21,8 @@ function MessageArea() {
   // for emoji input
   let[input,setInput] = useState("")
 
-  let[frontendImage,setFrontendImage] = useState("")
-  let[backendImage,setBackendImage] = useState("")
+  let[frontendImage,setFrontendImage] = useState(null)
+  let[backendImage,setBackendImage] = useState(null)
 
   let image = useRef()
 
@@ -48,8 +48,8 @@ function MessageArea() {
       let result = await axios.post(`${serverUrl}/api/message/send/${selectedUser._id}`,formData,{withCredentials:true})
       dispatch(setMessages([...messages,result.data])) // previuos messages remains and adding the new messages using dispatch
       setInput("");
-      setFrontendImage("");
-      setBackendImage("");
+      setFrontendImage(null);
+      setBackendImage(null);
     } catch (error) {
       console.log(error)
     }
@@ -62,10 +62,10 @@ function MessageArea() {
 
   // updating message using socktio
   useEffect(()=>{
-    socket.on("newMessage" , (mess) => {
+    socket?.on("newMessage" , (mess) => {
       dispatch(setMessages([...messages,mess]))
     })
-    return () => socket.off("newMessage")
+    return () => socket?.off("newMessage")
   },[messages,setMessages])
 
   return (
@@ -81,7 +81,7 @@ function MessageArea() {
               </div>
               <h1 className='text-white font-semibold text-[20px]'>{selectedUser?.name || "user"}</h1>
         </div>
-        <div className='w-full h-[550px] flex flex-col py-[30px] px-[20px] overflow-auto gap-[10px]'>
+        <div className='w-full h-[70%] flex flex-col py-[30px] px-[20px] overflow-auto gap-[10px]'>
 
           {showPicker &&  <div className='absolute bottom-[120px] left-[20px]'><EmojiPicker width={250} height={350} className='shadow-gray-500 shadow-lg z-[100]' onEmojiClick={onEmojiClick}/></div>}
 
@@ -96,14 +96,15 @@ function MessageArea() {
         </div>
         }
 
-      {!selectedUser && <div className='w-full h-full flex flex-col justify-center items-center '>
+      {!selectedUser && 
+      <div className='w-full h-full flex flex-col justify-center items-center '>
         <h1 className='text-gray-700 font-bold text-[50px]'>Welcome to Talksy</h1>
         <span className='text-gray-700 font-semibold text-[30px]'>Talk Easy !</span>
         </div>}
 
         {selectedUser && <div className='w-full lg:w-[70%] h-[100px] fixed bottom-[20px] flex items-center justify-center '>
-          <img src={frontendImage} alt="" className='w-[100px] absolute bottom-[100px] right-[20%] rounded-lg shadow-gray-400 shadow-lg'/>
-          <form className='w-[95%] lg:w-[70%] h-[60px] bg-[rgb(23,151,194)] rounded-full  shadow-gray-400 shadow-lg flex items-center gap-[20px] px-[20px]' onSubmit={handleSendMessage}>
+          <img src={frontendImage} alt="" className='w-[80px] absolute bottom-[100px] right-[20%] rounded-lg shadow-gray-400 shadow-lg'/>
+          <form className='w-[95%] lg:w-[70%] h-[60px] bg-[rgb(23,151,194)] rounded-full flex items-center gap-[20px] px-[20px] relative' onSubmit={handleSendMessage}>
 
           <div onClick={()=>setShowPicker(prev=>!prev)}>
           <RiEmojiStickerLine className='w-[25px] h-[25px] text-white cursor-pointer'/>
@@ -117,7 +118,7 @@ function MessageArea() {
           <FaRegImages className='w-[25px] h-[25px] text-white cursor-pointer'/>
           </div>
 
-          {input.length > 0 || backendImage != null && (<button>
+          {(input.length > 0 || backendImage != null) && (<button>
           <RiSendPlane2Fill className='w-[25px] h-[25px] text-white cursor-pointer'/>
           </button>)}
 
